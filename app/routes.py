@@ -11,7 +11,7 @@ File: routes.py
 import logging
 
 # Import third-party modules 
-from flask import Flask, request, jsonify
+from flask import render_template, Flask, request, jsonify
 
 # Import instances and models
 from app import app, store
@@ -152,7 +152,7 @@ def delete_item(item_id):
 # ========================================================================================================
 @app.route('/')
 def index():
-    return 'Welcome to Uncle Pat\'s app Online Store!'
+    return render_template('index.html', items=read_all_items().json)
 
 @app.route('/item', methods=['GET', 'POST'])
 def items():
