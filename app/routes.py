@@ -32,7 +32,7 @@ Reads all items in the store.
 @return             A list of dictionary (Item) objects.
 @throws Exception   If failed to read items from the store.
 '''
-def read_all_items():
+def readAllItems():
     try:
         # Query all items from the store
         items = Item.query.all()
@@ -50,7 +50,7 @@ Creates a new item in the store.
 @return             A JSON object containing the success message and HTTP status code.
 @throws Exception   If failed to create item in the store.
 '''
-def create_item(data):
+def createItem(data):
     # Get fields from request data 
     item_name = data.get('item_name')
     item_description = data.get('item_description')
@@ -76,14 +76,14 @@ def create_item(data):
 '''
 Reads an item in the store.
 
-@param item_id      The ID of the item to read.
+@param itemId      The ID of the item to read.
 @return             A JSON object containing the item details.
 @throws Exception   If failed to read item from the store.
 '''
-def read_item(item_id):
+def readItem(itemId):
     try:
         # Query a specific item from the store
-        item = Item.query.get(item_id)
+        item = Item.query.get(itemId)
 
         if item:
             # Store the item in a dictionary (Item) object
@@ -96,15 +96,15 @@ def read_item(item_id):
 '''
 Updates an item in the store.
 
-@param item_id      The ID of the item to update.
+@param itemId      The ID of the item to update.
 @param data         A JSON object containing the item details.
 @return             A JSON object containing the success message and HTTP status code.
 @throws Exception   If failed to update item in the store.
 '''
-def update_item(item_id, data):
+def updateItem(itemId, data):
     try:
         # Get the item with the specified ID
-        item = Item.query.get(item_id)
+        item = Item.query.get(itemId)
         if item:
             # Update the item object with the new data
             item.name = data.get('item_name')
@@ -125,14 +125,14 @@ def update_item(item_id, data):
 '''
 Deletes an item in the store.
 
-@param item_id      The ID of the item to delete.
+@param itemId      The ID of the item to delete.
 @return             A JSON object containing the success message and HTTP status code.
 @throws Exception   If failed to delete item from the store.
 '''
-def delete_item(item_id):
+def delete_item(itemId):
     try:
         # Get the item with the specified ID
-        item = Item.query.get(item_id)
+        item = Item.query.get(itemId)
         if item:
             # Delete the item from the database
             store.session.delete(item)
@@ -152,21 +152,21 @@ def delete_item(item_id):
 # ========================================================================================================
 @app.route('/')
 def index():
-    return render_template('index.html', items=read_all_items().json)
+    return render_template('index.html', items=readAllItems().json)
 
 @app.route('/item', methods=['GET', 'POST'])
 def items():
     if request.method == 'GET':
-        return read_all_items()
+        return readAllItems()
     elif request.method == 'POST':
         logging.info(request.get_json())
-        return create_item(request.get_json())
+        return createItem(request.get_json())
 
-@app.route('/item/<int:item_id>', methods=['GET', 'PUT', 'DELETE'])
-def item(item_id):
+@app.route('/item/<int:itemId>', methods=['GET', 'PUT', 'DELETE'])
+def item(itemId):
     if request.method == 'GET':
-        return read_item(item_id)
+        return readItem(itemId)
     elif request.method == 'PUT':
-        return update_item(item_id, request.get_json())
+        return updateItem(itemId, request.get_json())
     elif request.method == 'DELETE':
-        return delete_item(item_id)
+        return delete_item(itemId)
