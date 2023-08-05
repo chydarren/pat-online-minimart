@@ -129,7 +129,7 @@ Deletes an item in the store.
 @return             A JSON object containing the success message and HTTP status code.
 @throws Exception   If failed to delete item from the store.
 '''
-def delete_item(itemId):
+def deleteItem(itemId):
     try:
         # Get the item with the specified ID
         item = Item.query.get(itemId)
@@ -169,4 +169,4 @@ def item(itemId):
     elif request.method == 'PUT':
         return updateItem(itemId, request.get_json())
     elif request.method == 'DELETE':
-        return delete_item(itemId)
+        return deleteItem(itemId)
