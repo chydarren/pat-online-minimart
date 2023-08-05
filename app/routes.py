@@ -11,7 +11,7 @@ File: routes.py
 import logging
 
 # Import third-party modules 
-from flask import render_template, Flask, request, jsonify                          # python -m pip install flask
+from flask import render_template, Flask, request, jsonify, redirect, url_for       # python -m pip install flask
 from flask_login import LoginManager, login_user, logout_user, login_required       # python -m pip install flask-login
 from werkzeug.security import check_password_hash                                   # python -m pip install werkzeug
 
@@ -159,7 +159,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
-        return render_template('login.html')
+        return redirect(url_for('index'))
     elif request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -170,7 +170,7 @@ def login():
             login_user(user)
             return render_template('store.html', items=readAllItems().json)
         else:
-            return render_template('login.html', message='Invalid username or password')
+            return render_template('index.html', message='Invalid username or password')
     
 @app.route('/store')
 @login_required
