@@ -9,11 +9,12 @@ File: routes.py
 # ========================================================================================================
 # Import built-in modules
 import logging
+import functools
 
 # Import third-party modules 
-from flask import render_template, Flask, request, jsonify, redirect, url_for       # python -m pip install flask
-from flask_login import LoginManager, login_user, logout_user, login_required       # python -m pip install flask-login
-from werkzeug.security import check_password_hash                                   # python -m pip install werkzeug
+from flask import render_template, Flask, request, jsonify, redirect, url_for                       # python -m pip install flask
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user         # python -m pip install flask-login
+from werkzeug.security import check_password_hash                                                   # python -m pip install werkzeug
 
 # Import instances and models
 from app import app, storeDb
@@ -152,10 +153,22 @@ def deleteItem(itemId):
 # ========================================================================================================
 # ROUTES
 # ========================================================================================================
+'''
+The default route.
+'''
 @app.route('/')
 def index():
-    return render_template('index.html', items=readAllItems().json)
+    # if user is logged in, redirect to store page
+    if current_user.is_authenticated:
+        return redirect(url_for('store'))
+    else:
+        return render_template('index.html', items=readAllItems().json)
 
+'''
+The login route which authenticate users from the login form in the index page.
+
+@return     The store page if the user is authenticated, otherwise the index page.
+'''
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'GET':
@@ -168,15 +181,32 @@ def login():
 
         if user and user.verifyPassword(password):
             login_user(user)
-            return render_template('store.html', items=readAllItems().json)
+            return redirect(url_for('store'))
         else:
-            return render_template('index.html', message='Invalid username or password')
-    
+            return redirect(url_for('index'))
+
+'''
+The store route which displays the store page.
+
+@return     The store page if the user is authenticated.
+'''
 @app.route('/store')
 @login_required
 def store():
     return render_template('store.html', items=readAllItems().json)
 
+'''
+The logout route which logs out the user from the store page.
+'''
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return render_template('index.html', items=readAllItems().json)
+
+'''
+API item routes
+'''
 @app.route('/item', methods=['GET', 'POST'])
 @login_required
 def items():
@@ -195,9 +225,3 @@ def item(itemId):
         return updateItem(itemId, request.get_json())
     elif request.method == 'DELETE':
         return deleteItem(itemId)
-
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    return render_template('index.html', items=readAllItems().json)

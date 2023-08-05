@@ -41,7 +41,7 @@ https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-
                         <div class="row">
 							<!-- Minimart title -->
                             <div class="col-sm-6">
-                                <h2>Pat's Online Minimart</h2>
+                                <h2><b>Pat's Online Minimart</b></h2>
                             </div>
 							<!-- Main actions -->
                             <div class="col-sm-6">
@@ -55,39 +55,53 @@ https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-
                                 </a>
                             </div>
                         </div>
+                        {% if current_user.is_authenticated %}
+                        <div class="row">
+                            <!-- Minimart title -->
+                            <div class="col-sm-6">
+                                <h6>Welcome back, {{ current_user.username }}</h6>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
 					<!-- Minimart store -->
-                    <table class="table table-striped table-hover">
-						<!-- Table column header -->
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-								<th>Actions</th>
-                            </tr>
-                        </thead>
-						<!-- Table body (i.e. store items)-->
-						<tbody>
-							{% for item in items %}
-							<tr>
-								<td>{{ item.name }}</td>
-								<td>{{ item.description }}</td>
-								<td>{{ item.price }}</td>
-								<td>{{ item.quantity }}</td>
-								<td>
-									<a href="#updateItemModal" class="update" data-toggle="modal" onclick="openUpdateModal({{ item.id }})")">
-										<i class="material-icons" data-toggle="tooltip" title="Update">&#xE254;</i>
-									</a>
-									<a href="#deleteItemModal" class="delete" data-toggle="modal" onclick="openDeleteItemModal({{ item.id }})">
-										<i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
-									</a>
-								</td>
-							</tr>
-							{% endfor %}
-						</tbody>
-                    </table>
+                    {% if items %}
+                        <table class="table table-striped table-hover">
+                            <!-- Table column header -->
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <!-- Table body (i.e. store items)-->
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>{{ item.name }}</td>
+                                    <td>{{ item.description }}</td>
+                                    <td>{{ item.price }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td>
+                                        <a href="#updateItemModal" class="update" data-toggle="modal" onclick="openUpdateModal({{ item.id }})")">
+                                            <i class="material-icons" data-toggle="tooltip" title="Update">&#xE254;</i>
+                                        </a>
+                                        <a href="#deleteItemModal" class="delete" data-toggle="modal" onclick="openDeleteItemModal({{ item.id }})">
+                                            <i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="alert alert-warning">
+                            There are currently no items in Pat's Online Minimart. Check back later!
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
