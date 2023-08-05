@@ -16,16 +16,13 @@ from app.models import User
 # ========================================================================================================
 if __name__ == '__main__':
     with app.app_context():
-        # if admin user dont exist, create it
-        new_user = User('chydarren', 'test')
+        # Create database tables for data models
+        storeDb.create_all()
 
-        # check if user exists
-        user = User.query.filter_by(username='chydarren').first()
-
+        # For MVP, we will use a single pre-created admin account
+        user = User.query.filter_by(username='unclepat').first()
         if user is None:
-            storeDb.session.add(new_user)
+            storeDb.session.add(User('unclepat', 'unclepat_2023_08'))
             storeDb.session.commit()
 
-        storeDb.create_all()
-            
-    app.run(debug=True)
+    app.run() #debug=TRUE if want to debug

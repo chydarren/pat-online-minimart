@@ -86,9 +86,6 @@ async function createItem() {
             data[key] = value; 
         });
 
-        // print the form data
-        console.log(data);
-
         // Send the POST request to the Flask API to create a new item
         const responseData = await sendRequest('/item', 'POST', data);
 

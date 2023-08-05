@@ -42,8 +42,11 @@ def readAllItems():
 
         # Store the items in a list of dictionary (Item) objects 
         items_data = [{'id': item.id, 'name': item.name, 'description': item.description, 'price': item.price, 'quantity': item.quantity} for item in items]
+        
+        logging.info('(CRUD) Items were successfully read from the store.')
         return jsonify(items_data)
     except Exception as e:
+        logging.error('(CRUD) Failed to read items from the store: %s.', e)
         return jsonify({"error": "Failed to read items from the store"}), HTTP_INTERNAL_SERVER_ERROR
     
 '''
@@ -70,10 +73,13 @@ def createItem(data):
         # Commit the changes to the database
         storeDb.session.commit()
 
+        logging.info('(CRUD) Item was successfully created in the store.')
         return jsonify({"message": "Item created successfully in the store"}), HTTP_CREATED
     except Exception as e:
         # Rollback the changes to the database
         storeDb.session.rollback()
+
+        logging.error('(CRUD) Failed to create item in the store: %s.', e)
         return jsonify({"error": "Failed to create item in the store"}), HTTP_INTERNAL_SERVER_ERROR
 
 '''
@@ -89,11 +95,13 @@ def readItem(itemId):
         item = Item.query.get(itemId)
 
         if item:
-            # Store the item in a dictionary (Item) object
+            logging.info('(CRUD) Item was successfully read from the store.')
             return jsonify({'id': item.id, 'name': item.name, 'description': item.description, 'price': item.price, 'quantity': item.quantity})
         else:
+            logging.info('(CRUD) Item was not found in the store.')
             return jsonify({"error": "Item not found in the store"}), HTTP_NOT_FOUND
     except Exception as e:
+        logging.error('(CRUD) Failed to read item from the store: %s.', e)
         return jsonify({"error": "Failed to retrieve item"}), HTTP_INTERNAL_SERVER_ERROR
 
 '''
@@ -117,12 +125,17 @@ def updateItem(itemId, data):
             
             # Commit the changes to the database
             storeDb.session.commit()
+
+            logging.info('(CRUD) Item was successfully updated in the store.')
             return jsonify({"message": "Item updated successfully in the store"}), HTTP_OK
         else:
+            logging.info('(CRUD) Item was not found in the store.')
             return jsonify({"error": "Item not found in the store"}), HTTP_NOT_FOUND
     except Exception as e:
         # Rollback the changes to the database
         storeDb.session.rollback()
+
+        logging.error('(CRUD) Failed to update item in the store: %s.', e)
         return jsonify({"error": "Failed to update item in the store"}), HTTP_INTERNAL_SERVER_ERROR
     
 '''
@@ -142,13 +155,36 @@ def deleteItem(itemId):
 
             # Commit the changes to the database
             storeDb.session.commit()
+
+            logging.info('(CRUD) Item was successfully deleted from the store.')
             return jsonify({"message": "Item deleted successfully from the store"}), HTTP_OK
         else:
+            logging.info('(CRUD) Item was not found in the store.')
             return jsonify({"error": "Item not found in the store"}), HTTP_NOT_FOUND
     except Exception as e:
         # Rollback the changes to the database
         storeDb.session.rollback()
+
+        logging.error('(CRUD) Failed to delete item from the store: %s.', e)
         return jsonify({"error": "Failed to delete item from the store"}), HTTP_INTERNAL_SERVER_ERROR
+
+'''
+Logs in a user by authenticating the username and password.
+
+@param username     The username of the user.
+@param password     The password of the user.
+@return             True if the user is authenticated, otherwise False.
+'''
+def loginUser(username, password):
+    # Get the user with the specified username
+    user = User.query.filter_by(username=username).first()
+
+    # Check if the user exists and the password is correct
+    if user and user.verifyPassword(password):
+        login_user(user)
+        return True
+    else:
+        return False
 
 # ========================================================================================================
 # ROUTES
@@ -158,7 +194,7 @@ The default route.
 '''
 @app.route('/')
 def index():
-    # if user is logged in, redirect to store page
+    # If user is logged in, redirect to store page
     if current_user.is_authenticated:
         return redirect(url_for('store'))
     else:
@@ -177,10 +213,8 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
 
-        user = User.query.filter_by(username=username).first()
-
-        if user and user.verifyPassword(password):
-            login_user(user)
+        # If user is logged in, redirect to store page
+        if loginUser(username, password):
             return redirect(url_for('store'))
         else:
             return redirect(url_for('index'))
@@ -202,10 +236,10 @@ The logout route which logs out the user from the store page.
 @login_required
 def logout():
     logout_user()
-    return render_template('index.html', items=readAllItems().json)
+    return redirect(url_for('index'))
 
 '''
-API item routes
+API item routes for CRUD operations. 
 '''
 @app.route('/item', methods=['GET', 'POST'])
 @login_required
@@ -213,7 +247,6 @@ def items():
     if request.method == 'GET':
         return readAllItems()
     elif request.method == 'POST':
-        logging.info(request.get_json())
         return createItem(request.get_json())
 
 @app.route('/item/<int:itemId>', methods=['GET', 'PUT', 'DELETE'])
