@@ -96,7 +96,7 @@ table.table td a {
 table.table td a:hover {
 	color: #2196F3;
 }
-table.table td a.edit {
+table.table td a.update {
 	color: #FFC107;
 }
 table.table td a.delete {
