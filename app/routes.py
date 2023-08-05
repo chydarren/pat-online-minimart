@@ -173,12 +173,12 @@ def login():
             return render_template('index.html', message='Invalid username or password')
     
 @app.route('/store')
-
+@login_required
 def store():
     return render_template('store.html', items=readAllItems().json)
 
 @app.route('/item', methods=['GET', 'POST'])
-
+@login_required
 def items():
     if request.method == 'GET':
         return readAllItems()
@@ -187,7 +187,7 @@ def items():
         return createItem(request.get_json())
 
 @app.route('/item/<int:itemId>', methods=['GET', 'PUT', 'DELETE'])
-
+@login_required
 def item(itemId):
     if request.method == 'GET':
         return readItem(itemId)
@@ -197,7 +197,7 @@ def item(itemId):
         return deleteItem(itemId)
 
 @app.route('/logout')
-
+@login_required
 def logout():
     logout_user()
     return render_template('index.html', items=readAllItems().json)
