@@ -46,9 +46,12 @@ HELPER FUNCTIONS TO INTERACT WITH THE BACKEND API SERVER
  * @returns         The response from the Flask API server.
  */
 async function sendRequest(url, method, data = null) {
+    const csrfToken = document.querySelector('body').getAttribute('data-csrf');
+
     // Define the headers and options for the request
     const headers = {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken
     };
   
     const options = {
@@ -82,6 +85,9 @@ async function createItem() {
         formData.forEach((value, key) => {
             data[key] = value; 
         });
+
+        // print the form data
+        console.log(data);
 
         // Send the POST request to the Flask API to create a new item
         const responseData = await sendRequest('/item', 'POST', data);

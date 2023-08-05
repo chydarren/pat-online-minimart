@@ -29,7 +29,7 @@ https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 		<script src="../static/script.js"></script>
     </head>
-    <body>
+    <body data-csrf="{{ csrf_token() }}">
         <!-- ========================================================================================================
         MAIN CONTENT 
         ========================================================================================================= -->
@@ -52,7 +52,8 @@ https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-
                             </div>
                         </div>
                     </div>
-					<!-- Minimart store -->
+                    <!-- Minimart store -->
+                    <h2 align="center">Welcome to Uncle Pat's Online Minimart</h2>
                     {% if items %}
                         <table class="table table-striped table-hover">
                             <!-- Table column header -->
@@ -92,11 +93,14 @@ https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-
             <div class="modal-dialog">
                 <div class="modal-content">
                     <form id="loginForm" action="/login" method="post">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <div class="modal-header">
                             <h4 class="modal-title">Log In</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         </div>
                         <div class="modal-body">
+                            <!-- Info Alert -->
+                            <div class="alert alert-info">For this MVP, the admin account has been pre-created via <b>run.py</b>.</div>
                             <div class="form-group">
                                 <input type="text" class="form-control" name="username" placeholder="Username" required>
                             </div>
