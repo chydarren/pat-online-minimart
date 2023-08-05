@@ -11,11 +11,13 @@ File: routes.py
 import logging
 
 # Import third-party modules 
-from flask import render_template, Flask, request, jsonify
+from flask import render_template, Flask, request, jsonify                          # python -m pip install flask
+from flask_login import LoginManager, login_user, logout_user, login_required       # python -m pip install flask-login
+from werkzeug.security import check_password_hash                                   # python -m pip install werkzeug
 
 # Import instances and models
 from app import app, store
-from app.models import Item
+from app.models import Item, User
 
 # HTTP status codes 
 HTTP_OK = 200
@@ -154,7 +156,29 @@ def deleteItem(itemId):
 def index():
     return render_template('index.html', items=readAllItems().json)
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and user.verifyPassword(password):
+            login_user(user)
+            return render_template('store.html', items=readAllItems().json)
+        else:
+            return render_template('login.html', message='Invalid username or password')
+    
+@app.route('/store')
+@login_required
+def store():
+    return render_template('store.html', items=readAllItems().json)
+
 @app.route('/item', methods=['GET', 'POST'])
+@login_required
 def items():
     if request.method == 'GET':
         return readAllItems()
@@ -163,6 +187,7 @@ def items():
         return createItem(request.get_json())
 
 @app.route('/item/<int:itemId>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
 def item(itemId):
     if request.method == 'GET':
         return readItem(itemId)
@@ -170,3 +195,9 @@ def item(itemId):
         return updateItem(itemId, request.get_json())
     elif request.method == 'DELETE':
         return deleteItem(itemId)
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return render_template('index.html', items=readAllItems().json)

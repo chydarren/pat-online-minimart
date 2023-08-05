@@ -7,8 +7,12 @@ File: models.py
 # ========================================================================================================
 # IMPORTS AND CONFIGURATIONS
 # ========================================================================================================
+# Import third-party modules 
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash    # python -m pip install werkzeug
+
 # Import instances
-from app import store
+from app import store, loginManager
 
 # ========================================================================================================
 # DATABASE MODELS
@@ -28,3 +32,27 @@ class Item(store.Model):
         self.description = description
         self.price = price
         self.quantity = quantity
+
+@loginManager.user_loader
+def getUser(userId):
+    return User.query.get(userId)
+
+# Create a model for User
+# Note: In this application, only the admin user is required to login
+class User(store.Model, UserMixin):
+    __tablename__ = 'users'
+    id = store.Column(store.Integer, primary_key=True)
+    username = store.Column(store.String(80), unique=True, nullable=False)
+    password = store.Column(store.String(80), nullable=False)
+
+    # Default constructor
+    def __init__(self, username, password):
+        # id is auto-generated and incremented
+        self.username = username
+        self.password = generate_password_hash(password)
+    
+    # Verify password
+    def verifyPassword(self, password):
+        return check_password_hash(self.password, password)
+
+    

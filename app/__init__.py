@@ -13,6 +13,7 @@ import logging
 # Import third-party modules
 from flask import Blueprint, Flask, request, jsonify    # python -m pip install flask
 from flask_sqlalchemy import SQLAlchemy                 # python -m pip install flask_sqlalchemy
+from flask_login import LoginManager                   
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -22,6 +23,15 @@ logging.basicConfig(level=logging.INFO)
 # ========================================================================================================
 # Create new Flask app instance 
 app = Flask(__name__)
+
+# Set secret key for session
+app.secret_key = 'test'
+
+# ========================================================================================================
+# LOGIN MANAGER
+# ========================================================================================================
+# Create LoginManager instance
+loginManager = LoginManager(app)
 
 # ========================================================================================================
 # DATABASE MODEL 
@@ -37,7 +47,3 @@ store = SQLAlchemy(app)
 # ========================================================================================================
 # Import routes from app package
 from app import routes
-
-
-
-
