@@ -16,7 +16,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required   
 from werkzeug.security import check_password_hash                                   # python -m pip install werkzeug
 
 # Import instances and models
-from app import app, store
+from app import app, storeDb
 from app.models import Item, User
 
 # HTTP status codes 
@@ -64,15 +64,15 @@ def createItem(data):
 
     try:
         # Add the new item object to the store 
-        store.session.add(new_item)
+        storeDb.session.add(new_item)
 
         # Commit the changes to the database
-        store.session.commit()
+        storeDb.session.commit()
 
         return jsonify({"message": "Item created successfully in the store"}), HTTP_CREATED
     except Exception as e:
         # Rollback the changes to the database
-        store.session.rollback()
+        storeDb.session.rollback()
         return jsonify({"error": "Failed to create item in the store"}), HTTP_INTERNAL_SERVER_ERROR
 
 '''
@@ -115,13 +115,13 @@ def updateItem(itemId, data):
             item.quantity = data.get('item_quantity')
             
             # Commit the changes to the database
-            store.session.commit()
+            storeDb.session.commit()
             return jsonify({"message": "Item updated successfully in the store"}), HTTP_OK
         else:
             return jsonify({"error": "Item not found in the store"}), HTTP_NOT_FOUND
     except Exception as e:
         # Rollback the changes to the database
-        store.session.rollback()
+        storeDb.session.rollback()
         return jsonify({"error": "Failed to update item in the store"}), HTTP_INTERNAL_SERVER_ERROR
     
 '''
@@ -137,16 +137,16 @@ def deleteItem(itemId):
         item = Item.query.get(itemId)
         if item:
             # Delete the item from the database
-            store.session.delete(item)
+            storeDb.session.delete(item)
 
             # Commit the changes to the database
-            store.session.commit()
+            storeDb.session.commit()
             return jsonify({"message": "Item deleted successfully from the store"}), HTTP_OK
         else:
             return jsonify({"error": "Item not found in the store"}), HTTP_NOT_FOUND
     except Exception as e:
         # Rollback the changes to the database
-        store.session.rollback()
+        storeDb.session.rollback()
         return jsonify({"error": "Failed to delete item from the store"}), HTTP_INTERNAL_SERVER_ERROR
 
 # ========================================================================================================
@@ -173,12 +173,12 @@ def login():
             return render_template('index.html', message='Invalid username or password')
     
 @app.route('/store')
-@login_required
+
 def store():
     return render_template('store.html', items=readAllItems().json)
 
 @app.route('/item', methods=['GET', 'POST'])
-@login_required
+
 def items():
     if request.method == 'GET':
         return readAllItems()
@@ -187,7 +187,7 @@ def items():
         return createItem(request.get_json())
 
 @app.route('/item/<int:itemId>', methods=['GET', 'PUT', 'DELETE'])
-@login_required
+
 def item(itemId):
     if request.method == 'GET':
         return readItem(itemId)
@@ -197,7 +197,7 @@ def item(itemId):
         return deleteItem(itemId)
 
 @app.route('/logout')
-@login_required
+
 def logout():
     logout_user()
     return render_template('index.html', items=readAllItems().json)

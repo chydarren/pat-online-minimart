@@ -8,7 +8,7 @@ File: run.py
 # IMPORTS AND CONFIGURATIONS
 # ========================================================================================================
 # Import instances
-from app import app, store 
+from app import app, storeDb
 from app.models import User
 
 # ========================================================================================================
@@ -16,8 +16,6 @@ from app.models import User
 # ========================================================================================================
 if __name__ == '__main__':
     with app.app_context():
-        store.create_all()
-
         # if admin user dont exist, create it
         new_user = User('chydarren', 'test')
 
@@ -25,7 +23,9 @@ if __name__ == '__main__':
         user = User.query.filter_by(username='chydarren').first()
 
         if user is None:
-            store.session.add(new_user)
-            store.session.commit()
+            storeDb.session.add(new_user)
+            storeDb.session.commit()
+
+        storeDb.create_all()
             
     app.run(debug=True)

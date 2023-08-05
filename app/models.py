@@ -12,18 +12,18 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash    # python -m pip install werkzeug
 
 # Import instances
-from app import store, loginManager
+from app import storeDb, loginManager
 
 # ========================================================================================================
 # DATABASE MODELS
 # ========================================================================================================
 # Create a model for Item 
-class Item(store.Model): 
-    id = store.Column(store.Integer, primary_key=True)
-    name = store.Column(store.String(100), nullable=False)
-    description = store.Column(store.String(200))
-    price = store.Column(store.Float, nullable=False)
-    quantity = store.Column(store.Integer, nullable=False)
+class Item(storeDb.Model): 
+    id = storeDb.Column(storeDb.Integer, primary_key=True)
+    name = storeDb.Column(storeDb.String(100), nullable=False)
+    description = storeDb.Column(storeDb.String(200))
+    price = storeDb.Column(storeDb.Float, nullable=False)
+    quantity = storeDb.Column(storeDb.Integer, nullable=False)
 
     # Default constructor
     def __init__(self, name, description, price, quantity):
@@ -39,11 +39,11 @@ def getUser(userId):
 
 # Create a model for User
 # Note: In this application, only the admin user is required to login
-class User(store.Model, UserMixin):
+class User(storeDb.Model, UserMixin):
     __tablename__ = 'users'
-    id = store.Column(store.Integer, primary_key=True)
-    username = store.Column(store.String(80), unique=True, nullable=False)
-    password = store.Column(store.String(80), nullable=False)
+    id = storeDb.Column(storeDb.Integer, primary_key=True)
+    username = storeDb.Column(storeDb.String(80), unique=True, nullable=False)
+    password = storeDb.Column(storeDb.String(80), nullable=False)
 
     # Default constructor
     def __init__(self, username, password):

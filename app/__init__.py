@@ -32,15 +32,16 @@ app.secret_key = 'test'
 # ========================================================================================================
 # Create LoginManager instance
 loginManager = LoginManager(app)
+loginManager.login_view = '/'
 
 # ========================================================================================================
 # DATABASE MODEL 
 # ========================================================================================================
-# Create store.db in the same directory as app.py
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///store.db'
+# Create storeDb.db in the same directory as app.py
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///storeDb.db'
 
 # Create SQLAlchemy instance and pass in the Flask app instance
-store = SQLAlchemy(app)
+storeDb = SQLAlchemy(app)
 
 # ========================================================================================================
 # API ENDPOINTS
