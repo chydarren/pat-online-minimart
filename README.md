@@ -8,7 +8,9 @@
 2. Launch a terminal and access the "pat-online-minimart" directory. 
 3. Check that you have Python 3.10.12 and above installed by typing `python --version` or `python3 --version`. Otherwise, you may install it via https://www.python.org/downloads/. 
 4. Install the required Python modules by typing `python -m pip install -r requirements.txt`. 
-5. Finally, launch the server by typing `python run.py` or `python3 run.py`. You should now see the application being served on http://127.0.0.1:5000. 
+5. Finally, launch the server by typing `python run.py` or `python3 run.py`. You should now see the application being served on http://127.0.0.1:5000. The admin account credentials are as follow: 
+   - Username: `unclepat` 
+   - Password: `unclepat_2023_08` 
 
 ## Assumptions and Interpretations
 
