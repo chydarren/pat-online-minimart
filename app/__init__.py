@@ -24,9 +24,7 @@ logging.basicConfig(level=logging.INFO)
 # ========================================================================================================
 # Create new Flask app instance 
 app = Flask(__name__)
-
-# Set secret key for session
-app.secret_key = 'test'
+app.config.from_pyfile('config.py')
 
 # CSRF protection
 csrf = CSRFProtect(app)
@@ -41,14 +39,11 @@ loginManager.login_view = '/'
 # ========================================================================================================
 # DATABASE MODEL 
 # ========================================================================================================
-# Create storeDb.db in the same directory as app.py
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///storeDb.db'
-
 # Create SQLAlchemy instance and pass in the Flask app instance
 storeDb = SQLAlchemy(app)
 
 # ========================================================================================================
-# API ENDPOINTS
+# API ENDPOINTS 
 # ========================================================================================================
 # Import routes from app package
 from app import routes
