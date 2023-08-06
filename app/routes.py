@@ -26,9 +26,65 @@ HTTP_CREATED = 201
 HTTP_NOT_FOUND = 404
 HTTP_INTERNAL_SERVER_ERROR = 500
 
+# Other constants 
+MAX_ITEM_NAME_LENGTH = 100
+MAX_ITEM_DESCRIPTION_LENGTH = 200
+MAX_USERNAME_LENGTH = 80
+MAX_PASSWORD_LENGTH = 80
+MIN_ITEM_PRICE = 0
+MIN_ITEM_QUANTITY = 0
+
 # ========================================================================================================
 # HELPER FUNCTIONS FOR BACKEND API SERVER
 # ========================================================================================================
+'''
+Gets the submitted item fields from the request data after server-side input validation.
+
+@param data         A JSON object containing the item details.
+@return             An Item object containing the item details.
+'''
+def getSubmittedItemFields(data): 
+    # Get fields from request data 
+    item_name = data.get('item_name')
+    item_description = data.get('item_description')
+    item_price = float(data.get('item_price'))
+    item_quantity = int(data.get('item_quantity'))
+
+    # Fields cannot be empty
+    if not item_name or not item_description or not item_price or not item_quantity:
+        return None
+    # Fields must be of the correct type
+    elif not isinstance(item_name, str) or not isinstance(item_description, str) or not isinstance(item_price, float) or not isinstance(item_quantity, int):
+        return None
+    # String fields must be within the correct length 
+    elif len(item_name) > MAX_ITEM_NAME_LENGTH or len(item_description) > MAX_ITEM_DESCRIPTION_LENGTH:
+        return None 
+    # Numeric fields must be positive 
+    elif item_price < MIN_ITEM_PRICE or item_quantity < MIN_ITEM_QUANTITY:
+        return None
+    
+    return Item(item_name, item_description, item_price, item_quantity)
+
+'''
+Gets the submitted user fields after server-side input validation.
+
+@param username    The username of the user.
+@param password    The password of the user.
+@return            A tuple containing the username and password of the user.
+'''
+def getSubmittedUserFields(username, password): 
+    # Fields cannot be empty
+    if not username or not password:
+        return None
+    # Fields must be of the correct type
+    elif not isinstance(username, str) or not isinstance(password, str):
+        return None
+    # String fields must be within the correct length 
+    elif len(username) > MAX_USERNAME_LENGTH or len(password) > MAX_PASSWORD_LENGTH:
+        return None 
+    
+    return username, password
+
 '''
 Reads all items in the store.
 
@@ -57,14 +113,12 @@ Creates a new item in the store.
 @throws Exception   If failed to create item in the store.
 '''
 def createItem(data):
-    # Get fields from request data 
-    item_name = data.get('item_name')
-    item_description = data.get('item_description')
-    item_price = data.get('item_price')
-    item_quantity = data.get('item_quantity')
-        
-    # Create a new item object
-    new_item = Item(item_name, item_description, item_price, item_quantity)
+    # Get fields from request data after server-side input validation
+    new_item = getSubmittedItemFields(data)
+    
+    if new_item is None:
+        logging.info('(CRUD) Failed to create item in the store: Invalid item fields.')
+        return jsonify({"error": "Failed to create item in the store"}), HTTP_INTERNAL_SERVER_ERROR
 
     try:
         # Add the new item object to the store 
@@ -117,11 +171,16 @@ def updateItem(itemId, data):
         # Get the item with the specified ID
         item = Item.query.get(itemId)
         if item:
-            # Update the item object with the new data
-            item.name = data.get('item_name')
-            item.description = data.get('item_description')
-            item.price = data.get('item_price')
-            item.quantity = data.get('item_quantity')
+            new_item = getSubmittedItemFields(data)
+
+            if new_item is None:
+                logging.info('(CRUD) Failed to update item in the store: Invalid new item fields.')
+                return jsonify({"error": "Failed to updat item in the store"}), HTTP_INTERNAL_SERVER_ERROR
+
+            item.name = new_item.name
+            item.description = new_item.description
+            item.price = new_item.price
+            item.quantity = new_item.quantity
             
             # Commit the changes to the database
             storeDb.session.commit()
@@ -176,6 +235,11 @@ Logs in a user by authenticating the username and password.
 @return             True if the user is authenticated, otherwise False.
 '''
 def loginUser(username, password):
+    username, password = getSubmittedUserFields(username, password) 
+
+    if username is None or password is None:
+        return False
+
     # Get the user with the specified username
     user = User.query.filter_by(username=username).first()
 

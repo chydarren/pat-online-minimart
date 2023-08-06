@@ -17,7 +17,11 @@ from app import storeDb, loginManager
 # ========================================================================================================
 # DATABASE MODELS
 # ========================================================================================================
-# Create a model for Item 
+'''
+Creates a model for Item. 
+
+@param storeDb.Model: The base class for all models
+'''
 class Item(storeDb.Model): 
     id = storeDb.Column(storeDb.Integer, primary_key=True)
     name = storeDb.Column(storeDb.String(100), nullable=False)
@@ -37,10 +41,16 @@ class Item(storeDb.Model):
 def getUser(userId):
     return User.query.get(userId)
 
-# Create a model for User
-# Note: In this application, only the admin user is required to login
+'''
+Creates a model for User, i.e. the Admin account(s). 
+
+@param storeDb.Model:   The base class for all models.
+@param UserMixin:       Default implementations for the methods that Flask-Login expects user objects to have.
+'''
 class User(storeDb.Model, UserMixin):
+    # Map this model to the 'users' table 
     __tablename__ = 'users'
+    
     id = storeDb.Column(storeDb.Integer, primary_key=True)
     username = storeDb.Column(storeDb.String(80), unique=True, nullable=False)
     password = storeDb.Column(storeDb.String(80), nullable=False)
@@ -54,5 +64,4 @@ class User(storeDb.Model, UserMixin):
     # Verify password
     def verifyPassword(self, password):
         return check_password_hash(self.password, password)
-
     
