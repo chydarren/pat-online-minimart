@@ -23,14 +23,22 @@ With serverless deployment, we will not require a container for our application.
 
 In the AWS Management Console, we can configure API Gateway to define the REST API endpoints and their corresponding HTTP methods (e.g., GET, POST, etc.). Each endpoint will be linked to the appropriate AWS Lambda function that we created and we can make them publicly accessible for us to serve our Flask application in the cloud.
 
-Below are two helpful articles which provide detailed instructions on how to deploy a flask application on cloud environment with different serverless components: 
+Below are two helpful articles which provide detailed instructions on how to deploy a flask application on AWS with different serverless components: 
 
 - [Deploying a Python Flask application to AWS Lambda with Serverless Framework and CircleCI](https://medium.com/swlh/deploying-a-python-flask-application-to-aws-lambda-with-serverless-framework-and-circleci-3f57437f0758)
 - [Deploying a Python Flask Application to AWS Lambda with AWS Serverless Application Model (SAM)](https://awstip.com/deploying-flask-applications-on-aws-lambda-with-sam-a-comprehensive-guide-to-serverless-python-be0d4884f960)
 
 ## Security Hardening Techniques on a Cloud Environment 
 
+There are a variety of techniques to harden the security of the flask application, especially when deploying on a cloud environment like AWS which already comes with a set of features that we can tap on. 
 
+First and foremost, we should ensure that our web application is served via HTTPS so that the data transmitted between the client and server is encrypted. AWS provides the Amazon Certificate Manager (ACM) service that allows us to obtain and manage SSL/TLS certificates for our domain.
+
+Secondly, we can utilize the AWS Web Application Firewall (WAF) to protect our application from common web exploits like SQL injection, cross-site scripting (XSS) and others. Within our Python flask code, we also implemented Cross-Site Request Forgery (CSRF) protection as well as both server-side and client-side form input validation for our database fields. Moreover, SQLAlchemy uses parameterized queries, a.k.a. prepared statements, to execute our SQL queries safely. The combination of both WAF and best practices in our code forms the robust defense against common web security threats. 
+
+Furthermore, we should place emphasis on proper Identity and Access Management (IAM) measures. For example, we should adopt the principle of least privilege and grant only necessary permissions to our web application as well as the supporting resources. Strong authentication mechanisms such as multi-factor authentication (MFA) should also be implemented. Aside, the application's performance and security should be constantly monitored with services such as the Amazon CloudWatch. To add on, it will also be good to have logging of CRUD-related operations built directly in our Python flask application so that we constantly maintain an audit trail of actions performed by users. 
+
+In addition, a comprehensive security strategy should also include continuous security assessments, regular security audits and penetration testing to identify and address potential vulnerabilities proactively. Regularly review and updating the web application and infrastructure configurations help us to stay up-to-date with the latest security best practices and patches. Notably, we can also employ tools like AWS CloudFormation or AWS Elastic Beanstalk to ensure consistent and secure deployments of our application whenever we introduce new features. 
 
 ## Acknowledgements 
 
