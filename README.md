@@ -17,15 +17,20 @@
 
 ## Deployment on Cloud Environment
 
+I am currently taking the AWS CLF-C01 Certified Cloud Practitioner certification and hence, I am more familiar with the Amazon Web Services (AWS). Given that my web application was developed in Python flask, I can leverage on AWS Lambda's serverless offering. 
 
+With serverless deployment, we will not require a container for our application. AWS Lambda will scale and manage the computing resources while API gateway acts as a trigger for the Lambda function, allowing it to handle HTTP requests from the Internet. By integrating the AWS Lambda with API gateway, there will be a frontend to handle the HTTP requests and route them to the appropriate Lambda function. As AWS Lambda does not natively support the WSGI standard used by Python flask, we will need the AWSGI adapter that allows the Flask application to understand the event format from the API gateway and respond accordingly. Thereafter, our flask application code can be included in an AWS Lambda function.
 
-## Security Hardening Techniques on Cloud Environment 
+In the AWS Management Console, we can configure API Gateway to define the REST API endpoints and their corresponding HTTP methods (e.g., GET, POST, etc.). Each endpoint will be linked to the appropriate AWS Lambda function that we created and we can make them publicly accessible for us to serve our Flask application in the cloud.
+
+## Security Hardening Techniques on a Cloud Environment 
 
 
 
 ## Acknowledgements 
 
 - **Darren Chua** | [@chydarren](https://github.com/chydarren)
+- **Tutorial Republic** (For the open-source Bootstrap CRUD Data Table for Database with Modal Form frontend template) 
 
 ## Credits 
 
