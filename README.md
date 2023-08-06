@@ -23,6 +23,11 @@ With serverless deployment, we will not require a container for our application.
 
 In the AWS Management Console, we can configure API Gateway to define the REST API endpoints and their corresponding HTTP methods (e.g., GET, POST, etc.). Each endpoint will be linked to the appropriate AWS Lambda function that we created and we can make them publicly accessible for us to serve our Flask application in the cloud.
 
+Below are two helpful articles which provide detailed instructions on how to deploy a flask application on cloud environment with different serverless components: 
+
+- [Deploying a Python Flask application to AWS Lambda with Serverless Framework and CircleCI](https://medium.com/swlh/deploying-a-python-flask-application-to-aws-lambda-with-serverless-framework-and-circleci-3f57437f0758)
+- [Deploying a Python Flask Application to AWS Lambda with AWS Serverless Application Model (SAM)](https://awstip.com/deploying-flask-applications-on-aws-lambda-with-sam-a-comprehensive-guide-to-serverless-python-be0d4884f960)
+
 ## Security Hardening Techniques on a Cloud Environment 
 
 
