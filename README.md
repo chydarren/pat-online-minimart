@@ -10,6 +10,11 @@
 4. Install the required Python modules by typing `python -m pip install -r requirements.txt`. 
 5. Finally, launch the server by typing `python run.py` or `python3 run.py`. You should now see the application being served on http://127.0.0.1:5000. 
 
+## Assumptions and Interpretations
+
+1. Uncle Pat's admin account(s) is/are pre-created in `run.py` for this MVP without a dedicated registration portal, just for testing purposes of the user and admin views of the online store. 
+2. Uncle Pat only requires item name, item description, item price and quantity (i.e. stock) be listed in his online store for shoppers' browsing. He does not require a shopping cart to be implemented at this stage.
+
 ## Deployment on Cloud Environment
 
 
