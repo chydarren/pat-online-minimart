@@ -3,37 +3,7 @@ Author: Chua Han Yong Darren
 Date: 05/08/2023 
 Application: Pat's Online Minimart
 File: script.js
-
-This JS file is adapted from an open-sourced Bootstrap template by Tutorial Republic: 
-https://www.tutorialrepublic.com/snippets/preview.php?topic=bootstrap&file=crud-data-table-for-database-with-modal-form
 **/
-
-/* ========================================================================================================
-PROVIDED BY TUTORIAL REPUBLIC
-======================================================================================================== */
-$(document).ready(function() {
-    // Activate tooltip
-    $('[data-toggle="tooltip"]').tooltip();
-    // Select/Deselect checkboxes
-    var checkbox = $('table tbody input[type="checkbox"]');
-    $("#selectAll").click(function() {
-        if (this.checked) {
-            checkbox.each(function() {
-                this.checked = true;
-            });
-        } else {
-            checkbox.each(function() {
-                this.checked = false;
-            });
-        }
-    });
-    checkbox.click(function() {
-        if (!this.checked) {
-            $("#selectAll").prop("checked", false);
-        }
-    });
-});
-
 /* ========================================================================================================
 HELPER FUNCTIONS TO INTERACT WITH THE BACKEND API SERVER
 ======================================================================================================== */
@@ -46,6 +16,7 @@ HELPER FUNCTIONS TO INTERACT WITH THE BACKEND API SERVER
  * @returns         The response from the Flask API server.
  */
 async function sendRequest(url, method, data = null) {
+    // Get the CSRF token from the HTML body
     const csrfToken = document.querySelector('body').getAttribute('data-csrf');
 
     // Define the headers and options for the request
@@ -116,10 +87,10 @@ async function openUpdateModal(itemId) {
         const responseData = await sendRequest(`/item/${updateItemId}`, 'GET');
 
         const updateItemForm = document.getElementById('updateItemForm');
-        updateItemForm.elements['item_name'].value = responseData.name;
-        updateItemForm.elements['item_description'].value = responseData.description;
-        updateItemForm.elements['item_price'].value = responseData.price;
-        updateItemForm.elements['item_quantity'].value = responseData.quantity;
+        updateItemForm.elements['itemName'].value = responseData.name;
+        updateItemForm.elements['itemDescription'].value = responseData.description;
+        updateItemForm.elements['itemPrice'].value = responseData.price;
+        updateItemForm.elements['itemQuantity'].value = responseData.quantity;
 
         $('#updateItemModal').modal('show');
     } catch (error) {

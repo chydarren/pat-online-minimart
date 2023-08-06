@@ -8,7 +8,7 @@ File: models.py
 # IMPORTS AND CONFIGURATIONS
 # ========================================================================================================
 # Import third-party modules 
-from flask_login import UserMixin
+from flask_login import UserMixin                                            # python -m pip install flask-login
 from werkzeug.security import generate_password_hash, check_password_hash    # python -m pip install werkzeug
 
 # Import instances

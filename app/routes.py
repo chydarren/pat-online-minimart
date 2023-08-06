@@ -9,12 +9,11 @@ File: routes.py
 # ========================================================================================================
 # Import built-in modules
 import logging
-import functools
 
 # Import third-party modules 
-from flask import render_template, Flask, request, jsonify, redirect, url_for                       # python -m pip install flask
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user         # python -m pip install flask-login
-from werkzeug.security import check_password_hash                                                   # python -m pip install werkzeug
+from flask import render_template, Flask, request, jsonify, redirect, url_for                    # python -m pip install flask                
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user      # python -m pip install flask-login
+from werkzeug.security import check_password_hash                                                # python -m pip install werkzeug
 
 # Import instances and models
 from app import app, storeDb
@@ -45,25 +44,25 @@ Gets the submitted item fields from the request data after server-side input val
 '''
 def getSubmittedItemFields(data): 
     # Get fields from request data 
-    item_name = data.get('item_name')
-    item_description = data.get('item_description')
-    item_price = float(data.get('item_price'))
-    item_quantity = int(data.get('item_quantity'))
+    itemName = data.get('itemName') 
+    itemDescription = data.get('itemDescription')
+    itemPrice = float(data.get('itemPrice'))
+    itemQuantity = int(data.get('itemQuantity'))
 
     # Fields cannot be empty
-    if not item_name or not item_description or not item_price or not item_quantity:
+    if not itemName or not itemDescription or not itemPrice or not itemQuantity:
         return None
     # Fields must be of the correct type
-    elif not isinstance(item_name, str) or not isinstance(item_description, str) or not isinstance(item_price, float) or not isinstance(item_quantity, int):
+    elif not isinstance(itemName, str) or not isinstance(itemDescription, str) or not isinstance(itemPrice, float) or not isinstance(itemQuantity, int):
         return None
     # String fields must be within the correct length 
-    elif len(item_name) > MAX_ITEM_NAME_LENGTH or len(item_description) > MAX_ITEM_DESCRIPTION_LENGTH:
+    elif len(itemName) > MAX_ITEM_NAME_LENGTH or len(itemDescription) > MAX_ITEM_DESCRIPTION_LENGTH:
         return None 
     # Numeric fields must be positive 
-    elif item_price < MIN_ITEM_PRICE or item_quantity < MIN_ITEM_QUANTITY:
+    elif itemPrice < MIN_ITEM_PRICE or itemQuantity < MIN_ITEM_QUANTITY:
         return None
     
-    return Item(item_name, item_description, item_price, item_quantity)
+    return Item(itemName, itemDescription, itemPrice, itemQuantity)
 
 '''
 Gets the submitted user fields after server-side input validation.
@@ -97,10 +96,10 @@ def readAllItems():
         items = Item.query.all()
 
         # Store the items in a list of dictionary (Item) objects 
-        items_data = [{'id': item.id, 'name': item.name, 'description': item.description, 'price': item.price, 'quantity': item.quantity} for item in items]
+        itemsData = [{'id': item.id, 'name': item.name, 'description': item.description, 'price': "{:.2f}".format(item.price), 'quantity': item.quantity} for item in items]
         
         logging.info('(CRUD) Items were successfully read from the store.')
-        return jsonify(items_data)
+        return jsonify(itemsData)
     except Exception as e:
         logging.error('(CRUD) Failed to read items from the store: %s.', e)
         return jsonify({"error": "Failed to read items from the store"}), HTTP_INTERNAL_SERVER_ERROR
@@ -114,15 +113,15 @@ Creates a new item in the store.
 '''
 def createItem(data):
     # Get fields from request data after server-side input validation
-    new_item = getSubmittedItemFields(data)
+    newItem = getSubmittedItemFields(data)
     
-    if new_item is None:
+    if newItem is None:
         logging.info('(CRUD) Failed to create item in the store: Invalid item fields.')
         return jsonify({"error": "Failed to create item in the store"}), HTTP_INTERNAL_SERVER_ERROR
 
     try:
         # Add the new item object to the store 
-        storeDb.session.add(new_item)
+        storeDb.session.add(newItem)
 
         # Commit the changes to the database
         storeDb.session.commit()
@@ -150,7 +149,7 @@ def readItem(itemId):
 
         if item:
             logging.info('(CRUD) Item was successfully read from the store.')
-            return jsonify({'id': item.id, 'name': item.name, 'description': item.description, 'price': item.price, 'quantity': item.quantity})
+            return jsonify({'id': item.id, 'name': item.name, 'description': item.description, 'price': "{:.2f}".format(item.price), 'quantity': item.quantity})
         else:
             logging.info('(CRUD) Item was not found in the store.')
             return jsonify({"error": "Item not found in the store"}), HTTP_NOT_FOUND
@@ -171,16 +170,16 @@ def updateItem(itemId, data):
         # Get the item with the specified ID
         item = Item.query.get(itemId)
         if item:
-            new_item = getSubmittedItemFields(data)
+            newItem = getSubmittedItemFields(data)
 
-            if new_item is None:
+            if newItem is None:
                 logging.info('(CRUD) Failed to update item in the store: Invalid new item fields.')
-                return jsonify({"error": "Failed to updat item in the store"}), HTTP_INTERNAL_SERVER_ERROR
+                return jsonify({"error": "Failed to update item in the store"}), HTTP_INTERNAL_SERVER_ERROR
 
-            item.name = new_item.name
-            item.description = new_item.description
-            item.price = new_item.price
-            item.quantity = new_item.quantity
+            item.name = newItem.name
+            item.description = newItem.description
+            item.price = newItem.price
+            item.quantity = newItem.quantity
             
             # Commit the changes to the database
             storeDb.session.commit()
@@ -255,6 +254,8 @@ def loginUser(username, password):
 # ========================================================================================================
 '''
 The default route.
+
+@return     The index page if the user is not logged in, otherwise the store page.
 '''
 @app.route('/')
 def index():
@@ -295,6 +296,8 @@ def store():
 
 '''
 The logout route which logs out the user from the store page.
+
+@return     The index page.
 '''
 @app.route('/logout')
 @login_required
