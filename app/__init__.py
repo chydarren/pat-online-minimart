@@ -12,9 +12,9 @@ import logging
 
 # Import third-party modules
 from flask import Blueprint, Flask, request, jsonify    # python -m pip install flask
-from flask_sqlalchemy import SQLAlchemy                 # python -m pip install flask_sqlalchemy
-from flask_login import LoginManager                    # python -m pip install flask_login
-from flask_wtf.csrf import CSRFProtect                  # python -m pip install flask_wtf
+from flask_sqlalchemy import SQLAlchemy                 # python -m pip install flask-sqlalchemy
+from flask_login import LoginManager                    # python -m pip install flask-login
+from flask_wtf.csrf import CSRFProtect                  # python -m pip install flask-wtf
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
